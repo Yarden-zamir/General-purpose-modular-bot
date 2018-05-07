@@ -1,1 +1,0 @@
-java -jar target/discordToGithub-1.0-SNAPSHOT.jar
