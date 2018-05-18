@@ -20,12 +20,10 @@ public class issueModule extends Plugin{
     public issueModule(PluginWrapper wrapper) {
         super(wrapper);
     }
-    
     @Extension
     public static class issueAdder implements chatModule{
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
-            
         }
 
         @Override

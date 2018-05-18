@@ -5,16 +5,18 @@
  */
 package com.pandev.modularbot.modules;
 
-import javax.swing.JFrame;
+import org.pf4j.ExtensionPoint;
 
 /**
  *
  * @author PandaBoy444
  */
-public interface guiModule extends module {
+public interface module extends ExtensionPoint {
+
     /**
-     * Builds the gui for this module
-     * @return A JFrame representing this module
+     * The init code for the module
+     *
+     * @return itself
      */
-    public JFrame buildGui();
+    public module loadModule();
 }

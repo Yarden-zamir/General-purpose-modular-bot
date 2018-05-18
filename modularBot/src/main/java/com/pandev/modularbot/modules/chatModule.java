@@ -6,20 +6,12 @@
 package com.pandev.modularbot.modules;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import org.pf4j.ExtensionPoint;
 
 /**
  *
  * @author PandaBoy444
  */
-public interface chatModule extends ExtensionPoint{
-
-    /**
-     * The init code for the module
-     * @return itself
-     */
-    public chatModule loadModule();
-
+public interface chatModule extends module{
     /**
      * The receiver event, this will be called every time a discord message is received
      * @param event

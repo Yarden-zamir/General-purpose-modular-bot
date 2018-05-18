@@ -7,7 +7,6 @@ package com.pandev.modularbot;
 
 import com.pandev.modularbot.modules.chatModule;
 import com.pandev.modularbot.modules.guiModule;
-import java.io.File;
 import java.util.List;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
@@ -22,29 +21,41 @@ public class driver {
         if (args[0].contains("dev")){
             System.err.println(">>> entering dev mod");
         }
-        PluginManager pluginManager = new DefaultPluginManager(new File("plugins").toPath());
+        PluginManager pluginManager = new DefaultPluginManager();
         pluginManager.loadPlugins();
         pluginManager.startPlugins();
+        
+        //
         
         loadChatModules(pluginManager);
         loadGuiModules(pluginManager);
     }
 
     private static void loadChatModules(PluginManager pluginManager) {
+        System.out.println("There are "+pluginManager.getStartedPlugins().size()+" modules loaded");
         List<chatModule> chatModules = pluginManager.getExtensions(chatModule.class);
-        for (chatModule cm : chatModules) {
-            System.out.println(">>> Started loading " + cm.getClass());
+        System.err.println("There are "+chatModules.size()+" chat modules");
+        chatModules.stream().map((cm) -> {
             cm.loadModule();
-            System.out.println(">>> Finished loading " + cm.getClass() + "\n");
-        }
+            return cm;
+        }).forEachOrdered((cm) -> {
+            System.out.println(">>> Finished loading " + cm.getClass().getCanonicalName() + "\n");
+        });
     }
 
     private static void loadGuiModules(PluginManager pluginManager) {
         List<guiModule> guiModules = pluginManager.getExtensions(guiModule.class);
-        for (guiModule gm : guiModules) {
-            System.out.println(">>> Started loading " + gm.getClass());
+        guiModules.stream().map((gm) -> {
             gm.loadModule();
-            System.out.println(">>> Finished loading " + gm.getClass() + "\n");
-        }
+            return gm;
+        }).map((gm) -> {
+            System.out.println(">>> Finished loading " + gm.getClass().getCanonicalName() + "\n");
+            return gm;
+        }).map((gm) -> {
+            gm.buildGui().setVisible(true);
+            return gm;
+        }).forEachOrdered((gm) -> {
+            System.out.println("   >>> Finished building frame for "+gm.getClass().getCanonicalName()+"\n");
+        });
     }
 }
