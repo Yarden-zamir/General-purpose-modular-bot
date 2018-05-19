@@ -5,16 +5,13 @@
  */
 package com.pandev.modularbot.modules;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
  * @author PandaBoy444
  */
-public interface guiModule extends module {
-    /**
-     * Builds the gui for this module
-     * @return A JFrame representing this module
-     */
-    public JFrame buildGui();
+public interface guiComponentModule extends module{
+    public JPanel modulePanel=new JPanel();
+    public void constructPanel();
 }

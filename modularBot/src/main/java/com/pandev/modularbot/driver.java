@@ -6,10 +6,10 @@
 package com.pandev.modularbot;
 
 import com.pandev.modularbot.modules.chatModule;
-import com.pandev.modularbot.modules.guiModule;
 import java.util.List;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
+import com.pandev.modularbot.modules.frameModule;
 
 /**
  *
@@ -44,7 +44,7 @@ public class driver {
     }
 
     private static void loadGuiModules(PluginManager pluginManager) {
-        List<guiModule> guiModules = pluginManager.getExtensions(guiModule.class);
+        List<frameModule> guiModules = pluginManager.getExtensions(frameModule.class);
         guiModules.stream().map((gm) -> {
             gm.loadModule();
             return gm;
@@ -52,7 +52,7 @@ public class driver {
             System.out.println(">>> Finished loading " + gm.getClass().getCanonicalName() + "\n");
             return gm;
         }).map((gm) -> {
-            gm.buildGui().setVisible(true);
+            gm.buildFrame().setVisible(true);
             return gm;
         }).forEachOrdered((gm) -> {
             System.out.println("   >>> Finished building frame for "+gm.getClass().getCanonicalName()+"\n");
