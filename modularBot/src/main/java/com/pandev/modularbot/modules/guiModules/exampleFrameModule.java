@@ -5,19 +5,19 @@
  */
 package com.pandev.modularbot.modules.guiModules;
 
+import com.pandev.modularbot.modules.frameModule;
 import javax.swing.JFrame;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
-import com.pandev.modularbot.modules.frameModule;
 
 /**
  *
  * @author PandaBoy444
  */
-public class mainGuiModule extends Plugin {
+public class exampleFrameModule extends Plugin {
 
-    public mainGuiModule(PluginWrapper wrapper) {
+    public exampleFrameModule(PluginWrapper wrapper) {
         super(wrapper);
     }
 
@@ -32,7 +32,7 @@ public class mainGuiModule extends Plugin {
         @Override
         public JFrame buildFrame() {
             JFrame guiFrame = new JFrame("modularBot (GUI module)");
-            guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            guiFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             guiFrame.setSize(500, 500);
             return guiFrame;
         }
