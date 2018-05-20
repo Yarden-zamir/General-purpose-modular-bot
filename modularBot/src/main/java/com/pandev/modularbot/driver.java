@@ -7,9 +7,11 @@ package com.pandev.modularbot;
 
 import com.pandev.modularbot.modules.chatModule;
 import com.pandev.modularbot.modules.frameModule;
-import java.awt.EventQueue;
+import com.pandev.modularbot.modules.moduleConfig;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
@@ -20,10 +22,21 @@ import org.pf4j.PluginManager;
  */
 public class driver {
 
+    /**
+     * The file containing configs for all modules
+     */
+    public static File configFileLoc = new File("configs.cfg");
+
     private static JFrame mainWindow;
+
+    private HashMap<String, moduleConfig> configs = new HashMap<>();
+
     public static void main(String[] args) {
+        loadConfigs(configFileLoc);
+
+        //
         initConsoleWindow();
-        
+
         //
         PluginManager pluginManager = new DefaultPluginManager();
         pluginManager.loadPlugins();
@@ -32,27 +45,61 @@ public class driver {
         //
         loadChatModules(pluginManager);
         loadFrameModules(pluginManager);
-        
+
         //
     }
-    private static void initConsoleWindow(){
+
+    private static void initConsoleWindow() {
         JTextArea test = new JTextArea();
         TextAreaOutputStream console = new TextAreaOutputStream(test);
         PrintStream consoleStream = new PrintStream(console);
-        
+
         System.setOut(consoleStream);
         System.setErr(consoleStream);
-        
+
         mainWindow = new JFrame("Modular bot (root frame)");
         mainWindow.setSize(900, 600);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setVisible(true);
         mainWindow.add(test);
-        
+
     }
 
+    //
+    private static void loadConfigs(File cfgFile) {
+        String fullConfig = "";
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(configFileLoc));
+            String st;
+            while ((st = br.readLine()) != null) {
+                if (st.contains(":{")) {  //module found
+                    String module = st.replace(":{", "");
+                    //construct module config for the given module
+                    while (!st.contains("}")) {
+                        
+                    }
+                }
+                fullConfig += st + "\n";
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(moduleConfig.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(moduleConfig.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(moduleConfig.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    //module loaders
     private static void loadChatModules(PluginManager pluginManager) {
-        System.out.println("There are " + pluginManager.getStartedPlugins().size() + " modules loaded");
         List<chatModule> chatModules = pluginManager.getExtensions(chatModule.class);
         System.err.println("There are " + chatModules.size() + " chat modules");
         chatModules.stream().map((cm) -> {
@@ -79,143 +126,3 @@ public class driver {
         });
     }
 }
-
-
-class TextAreaOutputStream
-        extends OutputStream {
-
-// *************************************************************************************************
-// INSTANCE MEMBERS
-// *************************************************************************************************
-    private byte[] oneByte;                                                    // array for write(int val);
-    private Appender appender;                                                   // most recent action
-
-    public TextAreaOutputStream(JTextArea txtara) {
-        this(txtara, 1000);
-    }
-
-    public TextAreaOutputStream(JTextArea txtara, int maxlin) {
-        if (maxlin < 1) {
-            throw new IllegalArgumentException("TextAreaOutputStream maximum lines must be positive (value=" + maxlin + ")");
-        }
-        oneByte = new byte[1];
-        appender = new Appender(txtara, maxlin);
-    }
-
-    /**
-     * Clear the current console text area.
-     */
-    public synchronized void clear() {
-        if (appender != null) {
-            appender.clear();
-        }
-    }
-
-    @Override
-    public synchronized void close() {
-        appender = null;
-    }
-
-    @Override
-    public synchronized void flush() {
-    }
-
-    @Override
-    public synchronized void write(int val) {
-        oneByte[0] = (byte) val;
-        write(oneByte, 0, 1);
-    }
-
-    @Override
-    public synchronized void write(byte[] ba) {
-        write(ba, 0, ba.length);
-    }
-
-    @Override
-    public synchronized void write(byte[] ba, int str, int len) {
-        if (appender != null) {
-            appender.append(bytesToString(ba, str, len));
-        }
-    }
-
-    static private String bytesToString(byte[] ba, int str, int len) {
-        try {
-            return new String(ba, str, len, "UTF-8");
-        } catch (UnsupportedEncodingException thr) {
-            return new String(ba, str, len);
-        } // all JVMs are required to support UTF-8
-    }
-
-// *************************************************************************************************
-// STATIC MEMBERS
-// *************************************************************************************************
-    static class Appender
-            implements Runnable {
-
-        private final JTextArea textArea;
-        private final int maxLines;                                                   // maximum lines allowed in text area
-        private final LinkedList<Integer> lengths;                                                    // length of lines within text area
-        private final List<String> values;                                                    
-        // values waiting to be appended
-
-        private int curLength;                                                  // length of current line
-        private boolean clear;
-        private boolean queue;
-
-        Appender(JTextArea txtara, int maxlin) {
-            textArea = txtara;
-            maxLines = maxlin;
-            lengths = new LinkedList<>();
-            values = new ArrayList<>();
-
-            curLength = 0;
-            clear = false;
-            queue = true;
-        }
-
-        synchronized void append(String val) {
-            values.add(val);
-            if (queue) {
-                queue = false;
-                EventQueue.invokeLater(this);
-            }
-        }
-
-        synchronized void clear() {
-            clear = true;
-            curLength = 0;
-            lengths.clear();
-            values.clear();
-            if (queue) {
-                queue = false;
-                EventQueue.invokeLater(this);
-            }
-        }
-
-        // MUST BE THE ONLY METHOD THAT TOUCHES textArea!
-        @Override
-        public synchronized void run() {
-            if (clear) {
-                textArea.setText("");
-            }
-            for (String val : values) {
-                curLength += val.length();
-                if (val.endsWith(EOL1) || val.endsWith(EOL2)) {
-                    if (lengths.size() >= maxLines) {
-                        textArea.replaceRange("", 0, lengths.removeFirst());
-                    }
-                    lengths.addLast(curLength);
-                    curLength = 0;
-                }
-                textArea.append(val);
-            }
-            values.clear();
-            clear = false;
-            queue = true;
-        }
-
-        static private final String EOL1 = "\n";
-        static private final String EOL2 = System.getProperty("line.separator", EOL1);
-    }
-
-} /* END PUBLIC CLASS */

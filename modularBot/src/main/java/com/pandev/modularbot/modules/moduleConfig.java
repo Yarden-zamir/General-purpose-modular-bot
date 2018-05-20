@@ -5,21 +5,25 @@
  */
 package com.pandev.modularbot.modules;
 
+import java.util.HashMap;
+
 /**
  *
  * @author PandaBoy444
  */
 public class moduleConfig {
 
+    HashMap<String, String> configs;
+
     private void addConfigEntry(String entryName) {
-        addConfigEntry("potato", "");
+        addConfigEntry(entryName, "");
     }
-
-  //  public void addConfigEntry(String entryName, int defaultValue) {
-
 
     public void addConfigEntry(String entryName, String defaultValue) {
-        
+        configs.put(entryName, defaultValue);
     }
 
+
 }
+
+
