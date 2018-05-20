@@ -25,10 +25,6 @@ public class driver {
         initConsoleWindow();
         
         //
-        System.setProperty("pf4j.mode", "deployment");
-        if (args[0].contains("dev")) {
-            System.err.println(">>> entering dev mod");
-        }
         PluginManager pluginManager = new DefaultPluginManager();
         pluginManager.loadPlugins();
         pluginManager.startPlugins();
