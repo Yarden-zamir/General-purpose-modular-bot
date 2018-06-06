@@ -74,10 +74,17 @@ public class driver {
             String st;
             while ((st = br.readLine()) != null) {
                 if (st.contains(":{")) {  //module found
-                    String module = st.replace(":{", "");
+                    String ModuleName = st.replace(":{", "");
+                    moduleConfig mc = new moduleConfig(ModuleName);
                     //construct module config for the given module
+                    st = br.readLine();
                     while (!st.contains("}")) {
-                        
+                        if (st.contains(":")) {//checks that it's a field and not a comment
+                            mc.addConfigEntry(st.split(":")[0].trim(), st.split(":")[1].trim());
+                        } else {//it's a comment
+
+                        }
+                        st = br.readLine();
                     }
                 }
                 fullConfig += st + "\n";

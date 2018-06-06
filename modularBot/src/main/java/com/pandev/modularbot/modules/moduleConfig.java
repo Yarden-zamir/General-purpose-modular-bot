@@ -14,16 +14,16 @@ import java.util.HashMap;
 public class moduleConfig {
 
     HashMap<String, String> configs;
+    public String moduleName;
 
-    private void addConfigEntry(String entryName) {
-        addConfigEntry(entryName, "");
+    public moduleConfig(String moduleName) {
+        this.moduleName = moduleName;
+        configs = new HashMap<>();
     }
 
-    public void addConfigEntry(String entryName, String defaultValue) {
-        configs.put(entryName, defaultValue);
+    public void addConfigEntry(String entryName, String value) {
+        configs.put(entryName, value);
+        System.err.println("added " + "<" + entryName + ", " + value + ">" + " to "+moduleName);
     }
-
 
 }
-
-
