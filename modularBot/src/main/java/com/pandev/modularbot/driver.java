@@ -29,7 +29,7 @@ public class driver {
 
     private static JFrame mainWindow;
 
-    private HashMap<String, moduleConfig> configs = new HashMap<>();
+    public static HashMap<String, moduleConfig> configs = new HashMap<>();
 
     public static void main(String[] args) {
         loadConfigs(configFileLoc);
@@ -57,8 +57,14 @@ public class driver {
         System.setOut(consoleStream);
         System.setErr(consoleStream);
 
-        mainWindow = new JFrame("Modular bot (root frame)");
-        mainWindow.setSize(900, 600);
+        //configs sutffs
+        String title = configs.get("core").getConfigEntry("windowTitle", "Modular bot (root frame)");
+        String winSizeStr = configs.get("core").getConfigEntry("windowSize", "900,600");
+        mainWindow = new JFrame(title);
+        mainWindow.setSize(
+                Integer.parseInt(winSizeStr.split(",")[0]),
+                Integer.parseInt(winSizeStr.split(",")[1])
+        );
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setVisible(true);
         mainWindow.add(test);
@@ -67,6 +73,9 @@ public class driver {
 
     //
     private static void loadConfigs(File cfgFile) {
+        if (!configFileLoc.exists()){
+            return;
+        }
         String fullConfig = "";
         BufferedReader br = null;
         try {
@@ -86,6 +95,7 @@ public class driver {
                         }
                         st = br.readLine();
                     }
+                    configs.put(ModuleName, mc);
                 }
                 fullConfig += st + "\n";
             }

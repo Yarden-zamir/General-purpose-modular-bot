@@ -5,7 +5,9 @@
  */
 package com.pandev.modularbot.modules.chatModules;
 
+import com.pandev.modularbot.driver;
 import com.pandev.modularbot.modules.chatModule;
+import com.pandev.modularbot.modules.moduleConfig;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
@@ -22,13 +24,28 @@ public class issueModule extends Plugin{
     }
     @Extension
     public static class issueAdder implements chatModule{
+        
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
         }
 
         @Override
         public chatModule loadModule() {
+            //
+            initDiscord(driver.configs.get("discord"));
+            
+            //
             return this;
+        }
+        
+        //
+        
+        private void initDiscord(moduleConfig discordConfigs){
+            
+        }
+        
+        private void initGithub(moduleConfig githubConfigs){
+            
         }
         
     }

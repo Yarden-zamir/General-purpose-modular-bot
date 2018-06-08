@@ -23,7 +23,18 @@ public class moduleConfig {
 
     public void addConfigEntry(String entryName, String value) {
         configs.put(entryName, value);
-        System.err.println("added " + "<" + entryName + ", " + value + ">" + " to "+moduleName);
+    }
+    
+    public String getConfigEntry(String entryName, String entryDefeaultValue){
+        if (configs.containsKey(entryName)){
+            return configs.get(entryName);
+        }
+        writeEntryToFile(entryName, entryDefeaultValue);
+        return entryDefeaultValue;
+    }
+    
+    private void writeEntryToFile(String entryName, String value){
+        
     }
 
 }

@@ -54,7 +54,9 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.pandev.modularbot.driver</mainClass>
+                            <mainClass>
+                                com.pandev.modularbot.driver
+                            </mainClass>
                         </manifest>
                     </archive>
                 </configuration>
