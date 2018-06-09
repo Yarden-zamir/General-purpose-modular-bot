@@ -73,7 +73,7 @@ public class driver {
 
     //
     private static void loadConfigs(File cfgFile) {
-        if (!configFileLoc.exists()){
+        if (!configFileLoc.exists()) {
             return;
         }
         String fullConfig = "";
@@ -89,7 +89,9 @@ public class driver {
                     st = br.readLine();
                     while (!st.contains("}")) {
                         if (st.contains(":")) {//checks that it's a field and not a comment
-                            mc.addConfigEntry(st.split(":")[0].trim(), st.split(":")[1].trim());
+                            if (st.split(":").length > 1) {
+                                mc.addConfigEntry(st.split(":")[0].trim(), st.split(":")[1].trim());
+                            }
                         } else {//it's a comment
 
                         }
