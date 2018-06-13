@@ -12,7 +12,7 @@ import org.eclipse.egit.github.core.client.GitHubClient;
  *
  * @author PandaBoy444
  */
-public class gates {
+public class GLOBAL {
     public static GitHubClient gitHubClient;
     public static JDA discordClient;
 }

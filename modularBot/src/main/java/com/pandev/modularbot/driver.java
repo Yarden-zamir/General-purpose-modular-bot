@@ -6,6 +6,7 @@
 package com.pandev.modularbot;
 
 import com.pandev.modularbot.modules.chatModule;
+import com.pandev.modularbot.modules.coreModule;
 import com.pandev.modularbot.modules.moduleConfig;
 import java.io.*;
 import java.util.*;
@@ -42,7 +43,9 @@ public class driver {
         pluginManager.startPlugins();
 
         //
+        loadCoreModules(pluginManager);
         loadChatModules(pluginManager);
+        
         //
     }
 
@@ -115,6 +118,17 @@ public class driver {
     }
 
     //module loaders
+    private static void loadCoreModules(PluginManager pluginManager) {
+        List<coreModule> coreModules = pluginManager.getExtensions(coreModule.class);
+        System.err.println("There are " + coreModules.size() + " core modules");
+        coreModules.stream().map((cm) -> {
+            cm.loadModule(driver.configs.get(cm.getClass().getSimpleName()));
+            return cm;
+        }).forEachOrdered((cm) -> {
+            System.out.println(">>> Finished loading " + cm.getClass().getCanonicalName() + "\n");
+        });
+    }
+
     private static void loadChatModules(PluginManager pluginManager) {
         List<chatModule> chatModules = pluginManager.getExtensions(chatModule.class);
         System.err.println("There are " + chatModules.size() + " chat modules");

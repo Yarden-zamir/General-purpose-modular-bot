@@ -9,6 +9,11 @@ import com.pandev.modularbot.modules.chatModule;
 import com.pandev.modularbot.modules.coreModule;
 import com.pandev.modularbot.modules.module;
 import com.pandev.modularbot.modules.moduleConfig;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.security.auth.login.LoginException;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
@@ -30,6 +35,26 @@ public class exampleBot extends Plugin {
         @Override
         public module loadModule(moduleConfig cfg) {
             //
+
+            //
+            return this;
+        }
+
+    }
+
+    @Extension
+    public static class discord implements coreModule {
+
+        @Override
+        public module loadModule(moduleConfig cfg) {
+            //
+            try {
+                GLOBAL.discordClient = new JDABuilder(AccountType.BOT).
+                        setToken(cfg.getConfigEntry("botToken", "")).buildBlocking();
+            } catch (LoginException | InterruptedException ex) {
+                System.err.println(">>> ERR: can't connect to discord bot");
+                Logger.getLogger(exampleBot.class.getName()).log(Level.SEVERE, null, ex);
+            }
             //
             return this;
         }
