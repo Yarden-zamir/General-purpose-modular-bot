@@ -122,7 +122,7 @@ public class driver {
         List<chatModule> chatModules = pluginManager.getExtensions(chatModule.class);
         System.err.println("There are " + chatModules.size() + " chat modules");
         chatModules.stream().map((cm) -> {
-            cm.loadModule();
+            cm.loadModule(driver.configs.get(cm.getClass().getSimpleName()));
             return cm;
         }).forEachOrdered((cm) -> {
             System.out.println(">>> Finished loading " + cm.getClass().getCanonicalName() + "\n");
@@ -132,7 +132,7 @@ public class driver {
     private static void loadFrameModules(PluginManager pluginManager) {
         List<frameModule> guiModules = pluginManager.getExtensions(frameModule.class);
         guiModules.stream().map((gm) -> {
-            gm.loadModule();
+            gm.loadModule(driver.configs.get(gm.getClass().getSimpleName()));
             return gm;
         }).map((gm) -> {
             System.out.println(">>> Finished loading " + gm.getClass().getCanonicalName() + "\n");
