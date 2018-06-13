@@ -15,6 +15,8 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.service.IssueService;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
@@ -35,7 +37,12 @@ public class exampleBot extends Plugin {
         @Override
         public module loadModule(moduleConfig cfg) {
             //
-
+            GLOBAL.gitHubClient = new GitHubClient();
+            GLOBAL.gitHubClient.setCredentials(
+                    cfg.getConfigEntry("botUserName"),
+                    cfg.getConfigEntry("botPassword")
+            );
+            GLOBAL.githubIssueService = new IssueService(GLOBAL.gitHubClient);
             //
             return this;
         }
@@ -62,10 +69,11 @@ public class exampleBot extends Plugin {
     }
 
     @Extension
-    public static class issueAdder implements chatModule {
+    public static class issueAdder extends chatModule {
 
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
+            System.out.println(event);
         }
 
         @Override

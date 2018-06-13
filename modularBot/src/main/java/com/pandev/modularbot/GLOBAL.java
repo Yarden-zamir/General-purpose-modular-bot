@@ -7,6 +7,7 @@ package com.pandev.modularbot;
 
 import net.dv8tion.jda.core.JDA;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.service.IssueService;
 
 /**
  *
@@ -15,4 +16,5 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 public class GLOBAL {
     public static GitHubClient gitHubClient;
     public static JDA discordClient;
+    public static IssueService githubIssueService;
 }

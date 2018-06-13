@@ -24,17 +24,21 @@ public class moduleConfig {
     public void addConfigEntry(String entryName, String value) {
         configs.put(entryName, value);
     }
-    
-    public String getConfigEntry(String entryName, String entryDefeaultValue){
-        if (configs.containsKey(entryName)){
+
+    public String getConfigEntry(String entryName, String entryDefeaultValue) {
+        if (configs.containsKey(entryName)) {
             return configs.get(entryName);
         }
         writeEntryToFile(entryName, entryDefeaultValue);
         return entryDefeaultValue;
     }
-    
-    private void writeEntryToFile(String entryName, String value){
-        
+
+    public String getConfigEntry(String entryName) {
+        return getConfigEntry(entryName, "null");
+    }
+
+    private void writeEntryToFile(String entryName, String value) {
+
     }
 
 }

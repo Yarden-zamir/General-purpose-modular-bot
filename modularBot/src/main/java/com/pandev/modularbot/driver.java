@@ -134,6 +134,7 @@ public class driver {
         System.err.println("There are " + chatModules.size() + " chat modules");
         chatModules.stream().map((cm) -> {
             cm.loadModule(driver.configs.get(cm.getClass().getSimpleName()));
+            GLOBAL.discordClient.addEventListener(cm);
             return cm;
         }).forEachOrdered((cm) -> {
             System.out.println(">>> Finished loading " + cm.getClass().getCanonicalName() + "\n");
