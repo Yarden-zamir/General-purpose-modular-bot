@@ -6,7 +6,6 @@
 package com.pandev.modularbot;
 
 import com.pandev.modularbot.modules.chatModule;
-import com.pandev.modularbot.modules.frameModule;
 import com.pandev.modularbot.modules.moduleConfig;
 import java.io.*;
 import java.util.*;
@@ -44,8 +43,6 @@ public class driver {
 
         //
         loadChatModules(pluginManager);
-        loadFrameModules(pluginManager);
-
         //
     }
 
@@ -129,19 +126,4 @@ public class driver {
         });
     }
 
-    private static void loadFrameModules(PluginManager pluginManager) {
-        List<frameModule> guiModules = pluginManager.getExtensions(frameModule.class);
-        guiModules.stream().map((gm) -> {
-            gm.loadModule(driver.configs.get(gm.getClass().getSimpleName()));
-            return gm;
-        }).map((gm) -> {
-            System.out.println(">>> Finished loading " + gm.getClass().getCanonicalName() + "\n");
-            return gm;
-        }).map((gm) -> {
-            gm.buildFrame().setVisible(true);
-            return gm;
-        }).forEachOrdered((gm) -> {
-            System.out.println("   >>> Finished building frame for " + gm.getClass().getCanonicalName() + "\n");
-        });
-    }
 }

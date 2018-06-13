@@ -8,7 +8,7 @@ package com.pandev.modularbot.modules;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 /**
- *
+ * a chat module is a module that receives chat events
  * @author PandaBoy444
  */
 public interface chatModule extends module{

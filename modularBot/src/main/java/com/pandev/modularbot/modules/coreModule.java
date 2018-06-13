@@ -6,7 +6,7 @@
 package com.pandev.modularbot.modules;
 
 /**
- *
+ * A core module is a module that loads first 
  * @author PandaBoy444
  */
 public interface coreModule extends module{
