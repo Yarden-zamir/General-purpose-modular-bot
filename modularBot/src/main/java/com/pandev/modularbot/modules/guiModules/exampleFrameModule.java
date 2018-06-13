@@ -6,6 +6,8 @@
 package com.pandev.modularbot.modules.guiModules;
 
 import com.pandev.modularbot.modules.frameModule;
+import com.pandev.modularbot.modules.module;
+import com.pandev.modularbot.modules.moduleConfig;
 import javax.swing.JFrame;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
@@ -25,7 +27,7 @@ public class exampleFrameModule extends Plugin {
     public static class mainWindow implements frameModule {
 
         @Override
-        public frameModule loadModule() {
+        public module loadModule(moduleConfig cfg) {
             return this;
         }
 
@@ -38,19 +40,4 @@ public class exampleFrameModule extends Plugin {
         }
 
     }
-}
-
-class moduleConfig {
-
-    private void addConfigEntry(String entryName) {
-        addConfigEntry("potato", "");
-    }
-
-  //  public void addConfigEntry(String entryName, int defaultValue) {
-
-
-    public void addConfigEntry(String entryName, String defaultValue) {
-        
-    }
-
 }
