@@ -17,4 +17,5 @@ public class GLOBAL {
     public static GitHubClient gitHubClient;
     public static JDA discordClient;
     public static IssueService githubIssueService;
+    public static boolean isDebug = false;
 }

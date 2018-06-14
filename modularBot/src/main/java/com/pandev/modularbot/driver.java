@@ -32,6 +32,9 @@ public class driver {
     public static HashMap<String, moduleConfig> configs = new HashMap<>();
 
     public static void main(String[] args) {
+        applyArgs(args);
+
+        //
         loadConfigs(configFileLoc);
 
         //
@@ -45,8 +48,16 @@ public class driver {
         //
         loadCoreModules(pluginManager);
         loadChatModules(pluginManager);
-        
+
         //
+    }
+
+    private static void applyArgs(String[] args) {
+        if (Arrays.asList(args).contains("-debug")) {
+            //go into debug mode
+            GLOBAL.isDebug = true;
+        }
+
     }
 
     private static void initConsoleWindow() {

@@ -5,10 +5,13 @@
  */
 package com.pandev.modularbot;
 
+import com.pandev.modularbot.anotations.command;
 import com.pandev.modularbot.modules.chatModule;
 import com.pandev.modularbot.modules.coreModule;
 import com.pandev.modularbot.modules.module;
 import com.pandev.modularbot.modules.moduleConfig;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
@@ -73,7 +76,42 @@ public class exampleBot extends Plugin {
 
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
-            System.out.println(event);
+            if (GLOBAL.isDebug) {
+                //only listen to debug channels
+                if (event.getTextChannel().getName().equals("debug")) {
+                    process(event);
+                }
+            } else { //listen to all channels
+                process(event);
+            }
+
+        }
+
+        public void process(MessageReceivedEvent event) {
+            if (event.getMessage().getContentStripped().startsWith("/")) { // checks if it's a command
+                for (Method m : this.getClass().getDeclaredMethods()) {
+                    if (event.getMessage().getContentStripped().contains(m.getName())) {
+
+                        System.err.println("\nCalling " + m.getName() + "\n");
+                        try {
+                            System.err.println(m.getDeclaredAnnotations().length);
+                            m.invoke(this, event);
+                        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                            Logger.getLogger(exampleBot.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * @permissions all
+         * @param event
+         */
+        @command(permissionLevel = 1)
+        public void issue(MessageReceivedEvent event) {
+            System.err.println("It works? " + event.getMessage().getContentStripped());
+            java.awt.Toolkit.getDefaultToolkit().beep();
         }
 
         @Override
