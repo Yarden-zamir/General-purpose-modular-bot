@@ -16,11 +16,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -34,7 +36,8 @@ import org.pf4j.PluginWrapper;
  */
 public class core extends Plugin {
 
-    public static String commandPrefix = "";
+    public static String commandPrefix;
+    public static String permissions;
 
     public core(PluginWrapper wrapper) {
         super(wrapper);
@@ -52,7 +55,6 @@ public class core extends Plugin {
                     cfg.getConfigEntry("botPassword")
             );
             GLOBAL.githubIssueService = new IssueService(GLOBAL.gitHubClient);
-            core.commandPrefix = cfg.getConfigEntry("commandPrefix");
             //
             return this;
         }
@@ -83,48 +85,71 @@ public class core extends Plugin {
 
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
-            if (GLOBAL.isDebug) {
-                //only listen to debug channels
-                if (event.getTextChannel().getName().equals("debug")) {
+            try {
+                if (GLOBAL.isDebug) {
+                    //only listen to debug channels
+                    if (event.getTextChannel().getName().equals("debug")) {
+
+                        process(event);
+
+                    }
+                } else { //listen to all channels
                     process(event);
                 }
-            } else { //listen to all channels
-                process(event);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                Logger.getLogger(core.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
 
-        public void process(MessageReceivedEvent event) {
-            if (event.getMessage().getContentStripped().startsWith(core.commandPrefix)) { // checks if it's a command
-                for (Method m : this.getClass().getDeclaredMethods()) {
-                    if (event.getMessage().getContentStripped().contains(m.getName())) {
+        public void process(MessageReceivedEvent event) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            Method command = getCommand(event);
+            if (command != null) {
+                if (isPremitted(command, event.getMember().getRoles())) {
+                    command.invoke(this, event);
+                }
+            }
+        }
 
-                        try {
-                            for (Annotation a : m.getDeclaredAnnotations()) {
-                                boolean isCommand = a.toString().split("callable=")[1].split(",")[0].contains("true");
-                                boolean isCommandAllowed = true;
-                                if (isCommand && isCommandAllowed) {
-                                    System.err.println("\nCalling " + m.getName() + "\n");
-                                    m.invoke(this, event);
-                                    return;
-                                }
-                            }
-                        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                            Logger.getLogger(core.class.getName()).log(Level.SEVERE, null, ex);
+        private Method getCommand(MessageReceivedEvent event) {
+            String messageText = event.getMessage().getContentStripped();
+            for (Method m : this.getClass().getDeclaredMethods()) {
+                if (messageText.startsWith(core.commandPrefix + m.getName())) {
+                    for (Annotation a : m.getDeclaredAnnotations()) {
+                        if (((command) a).callable()) {
+                            return m;
                         }
                     }
                 }
             }
+            return null;
+        }
+
+        private boolean isPremitted(Method m, List<Role> roles) {
+            String[] permsArr = permissions.split(";");
+            for (String p:permsArr){
+                System.err.println(p);
+                for (Role r:roles){
+                    if (p.contains(r.getName())){
+                        int permsLvl = Integer.parseInt(p.split("~")[1]);
+                        for (Annotation a:m.getAnnotations()){
+                            if (((command)a).permissionLevel()<=permsLvl){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         @command(permissionLevel = 2, callable = true)
         public void issue(MessageReceivedEvent event) {
-            System.err.println("It works? " + event.getMessage().getContentStripped());
-            java.awt.Toolkit.getDefaultToolkit().beep();
         }
 
         @Override
         public module loadModule(moduleConfig cfg) {
+            core.commandPrefix = cfg.getConfigEntry("commandPrefix");
+            core.permissions = cfg.getConfigEntry("permissions");
             return this;
         }
 
