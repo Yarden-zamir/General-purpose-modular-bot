@@ -260,14 +260,16 @@ public class core extends Plugin {
         @command(permissionLevel = 3, callable = true)
         public void comment(MessageReceivedEvent event) throws IOException {
             String msg = event.getMessage().getContentStripped();
-            String issueIdStr = msg.split(" ")[1];
-            if (isNum(issueIdStr)) {
-                int issueId = Integer.parseInt(issueIdStr);
-                if (msg.split(" ").length >= 2) {
-                    GLOBAL.githubIssueService.createComment(GLOBAL.githubRepo, issueId, msg.split(" ", 2)[1]);
-                }
-            } else {
-                //TODO send error
+            if (msg.split(" ").length>=2){
+                String issueIdStr = msg.split(" ")[1];
+                if (isNum(issueIdStr)) {
+                    int issueId = Integer.parseInt(issueIdStr);
+                    if (msg.split(" ").length >= 2) {
+                        GLOBAL.githubIssueService.createComment(GLOBAL.githubRepo, issueId, msg.split(" ", 2)[1]);
+                    }
+                } else {
+                    //TODO send error
+                }   
             }
         }
 
