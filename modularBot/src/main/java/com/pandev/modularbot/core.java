@@ -93,7 +93,7 @@ public class core extends Plugin {
     }
 
     @Extension
-    public static class issueAdder extends chatModule {
+    public static class Adapter extends chatModule {
 
         @Override
         public void onMessageReceived(MessageReceivedEvent event) {
@@ -230,7 +230,29 @@ public class core extends Plugin {
             GLOBAL.githubIssueService.createIssue(GLOBAL.githubRepo, newIssue);
         }
 
-        @command(permissionLevel = 3, callable = true, 
+        @command(permissionLevel = 3, callable = true,
+                commandHelp = "[issue id] [reason/comment to go with opening the issue] -> opens a closed issue with an optional comment to go along")
+        public void open(MessageReceivedEvent event) throws IOException {
+            String msg = event.getMessage().getContentStripped();
+            String issueIdStr = msg.split(" ")[1];
+            if (isNum(issueIdStr)) {
+                int issueId = Integer.parseInt(issueIdStr);
+                if (msg.split(" ").length > 2) {
+                    GLOBAL.githubIssueService.createComment(GLOBAL.githubRepo, issueId, msg.split(" ", 3)[2]);
+                }
+                //TODO send opened
+                GLOBAL.githubIssueService.editIssue(
+                        GLOBAL.githubRepo,
+                        GLOBAL.githubIssueService.getIssue(
+                                GLOBAL.githubRepo, issueId
+                        ).setState("open")
+                );
+            } else {
+                //TODO send error
+            }
+        }
+
+        @command(permissionLevel = 3, callable = true,
                 commandHelp = "[issue id] [reason/comment to go with the close] -> closes an issue with an optional comment to go along")
         public void close(MessageReceivedEvent event) throws IOException {
             String msg = event.getMessage().getContentStripped();
@@ -260,7 +282,7 @@ public class core extends Plugin {
         @command(permissionLevel = 3, callable = true)
         public void comment(MessageReceivedEvent event) throws IOException {
             String msg = event.getMessage().getContentStripped();
-            if (msg.split(" ").length>=2){
+            if (msg.split(" ").length >= 2) {
                 String issueIdStr = msg.split(" ")[1];
                 if (isNum(issueIdStr)) {
                     int issueId = Integer.parseInt(issueIdStr);
@@ -269,7 +291,7 @@ public class core extends Plugin {
                     }
                 } else {
                     //TODO send error
-                }   
+                }
             }
         }
 
